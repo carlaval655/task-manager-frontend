@@ -15,6 +15,11 @@ export default function TaskForm({ onSubmit, initialData, onCancel }) {
       setTitle(initialData.title || '');
       setDescription(initialData.description || '');
       setDueDate(initialData.dueDate ? initialData.dueDate.slice(0, 10) : '');
+    } else {
+      // Limpiar campos si no hay datos iniciales
+      setTitle('');
+      setDescription('');
+      setDueDate('');
     }
   }, [initialData]);
 

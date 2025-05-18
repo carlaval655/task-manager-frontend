@@ -44,6 +44,7 @@ export default function Dashboard() {
   };
 
   const handleUpdate = async (data) => {
+    console.log(data);
     try {
       await axios.put(`/tasks/${editingTask.id}`, data);
       setEditingTask(null);
@@ -78,9 +79,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-700 via-blue-800 to-indigo-900 p-6 pb-20">
       <header className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Hola, {user?.name}</h1>
+        <h1 className="text-2xl font-bold text-white">Hola, {user?.name}</h1>
         <button
           onClick={logout}
           className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
@@ -103,7 +104,7 @@ export default function Dashboard() {
 
       <section className="mb-4 flex flex-wrap gap-2 justify-around ml-40 mr-40">
         <div className="flex flex-col">
-          <label className="font-semibold mb-1">Filtrar por estado</label>
+          <label className="font-semibold mb-1 text-white">Filtrar por estado</label>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -117,7 +118,7 @@ export default function Dashboard() {
         </div>
 
         <div className="flex flex-col">
-          <label className="font-semibold mb-1">
+          <label className="font-semibold mb-1 text-white">
             Buscar por título o descripción
           </label>
           <div className="relative">
@@ -141,7 +142,7 @@ export default function Dashboard() {
         </div>
 
         <div className="flex flex-col">
-          <label className="font-semibold mb-1">De:</label>
+          <label className="font-semibold mb-1 text-white">De:</label>
           <div className="relative">
             <input
               type="date"
@@ -168,7 +169,7 @@ export default function Dashboard() {
         </div>
 
         <div className="flex flex-col">
-          <label className="font-semibold mb-1">A:</label>
+          <label className="font-semibold mb-1 text-white">A:</label>
           <div className="relative">
             <input
               type="date"
@@ -200,7 +201,7 @@ export default function Dashboard() {
           <TaskCard
             key={task.id}
             task={task}
-            onEdit={() => setEditingTask(task)} // ← Este ya debería funcionar
+            onEdit={() => task.status!="completada"?setEditingTask(task):setEditingTask(null)} // ← Este ya debería funcionar
             onDelete={() => handleDelete(task)}
             onStatusChange={handleStatusChange}
           />

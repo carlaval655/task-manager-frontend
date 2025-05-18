@@ -21,8 +21,8 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-96">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-700 via-blue-800 to-indigo-900 p-6">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded flex flex-col items-center shadow-md w-96">
         <h2 className="text-xl font-bold mb-4">Registro</h2>
         {error && <p className="text-red-600 mb-2">{error}</p>}
         <input
