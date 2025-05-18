@@ -95,12 +95,12 @@ export default function Dashboard() {
         <select
           value={filter}
           onChange={e => setFilter(e.target.value)}
-          className="input"
+          className="input w-60"
         >
-          <option value="">Filtrar por estado</option>
-          <option value="pendiente">Pendiente</option>
+          <option value="">Todas las tareas</option>
+          <option value="pendiente">Pendientes</option>
           <option value="en progreso">En progreso</option>
-          <option value="completada">Completada</option>
+          <option value="completada">Completadas</option>
         </select>
         <input
           type="text"
