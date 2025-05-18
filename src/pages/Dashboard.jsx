@@ -1,40 +1,45 @@
-import { useState, useEffect, useContext } from 'react';
-import axios from '../api/axios';
-import { AuthContext } from '../context/AuthContext';
-import TaskCard from '../components/TaskCard';
-import TaskForm from '../components/TaskForm';
+import { useState, useEffect, useContext } from "react";
+import axios from "../api/axios";
+import { AuthContext } from "../context/AuthContext";
+import TaskCard from "../components/TaskCard";
+import TaskForm from "../components/TaskForm";
 
 export default function Dashboard() {
   const { user, logout } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
-  const [filter, setFilter] = useState('');
-  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const fetchTasks = async () => {
     try {
-      let url = '/tasks';
+      let url = "/tasks";
       const params = {};
       if (filter) params.status = filter;
       if (search) params.search = search;
 
+      // 👇 Agregamos filtros de fechas si están definidos
+      if (fromDate) params.from = fromDate;
+      if (toDate) params.to = toDate;
+
       const res = await axios.get(url, { params });
       setTasks(res.data);
     } catch (err) {
-      alert('Error al cargar tareas');
+      alert("Error al cargar tareas");
     }
   };
-
   useEffect(() => {
     fetchTasks();
-  }, [filter, search]);
+  }, [filter, search, fromDate, toDate]);
 
   const handleCreate = async (data) => {
     try {
-      await axios.post('/tasks', data);
+      await axios.post("/tasks", data);
       fetchTasks();
     } catch {
-      alert('Error al crear tarea');
+      alert("Error al crear tarea");
     }
   };
 
@@ -44,7 +49,7 @@ export default function Dashboard() {
       setEditingTask(null);
       fetchTasks();
     } catch {
-      alert('Error al actualizar tarea');
+      alert("Error al actualizar tarea");
     }
   };
 
@@ -53,17 +58,22 @@ export default function Dashboard() {
       await axios.put(`/tasks/${id}`, { status: newStatus });
       fetchTasks();
     } catch (err) {
-      alert(err.response?.data?.message || 'No se pudo cambiar el estado');
+      alert(err.response?.data?.message || "No se pudo cambiar el estado");
     }
   };
 
   const handleDelete = async (task) => {
-    if (!window.confirm('¿Seguro que quieres eliminar esta tarea? Solo las completadas se pueden eliminar.')) return;
+    if (
+      !window.confirm(
+        "¿Seguro que quieres eliminar esta tarea? Solo las completadas se pueden eliminar."
+      )
+    )
+      return;
     try {
       await axios.delete(`/tasks/${task.id}`);
       fetchTasks();
     } catch (error) {
-      alert(error.response?.data?.message || 'Error al eliminar tarea');
+      alert(error.response?.data?.message || "Error al eliminar tarea");
     }
   };
 
@@ -91,35 +101,108 @@ export default function Dashboard() {
         )}
       </section>
 
-      <section className="mb-4 flex gap-4">
-        <select
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
-          className="input w-60"
-        >
-          <option value="">Todas las tareas</option>
-          <option value="pendiente">Pendientes</option>
-          <option value="en progreso">En progreso</option>
-          <option value="completada">Completadas</option>
-        </select>
-        <input
-          type="text"
-          placeholder="Buscar por título o descripción"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="input flex-grow"
-        />
+      <section className="mb-4 flex flex-wrap gap-2 justify-around ml-40 mr-40">
+        <div className="flex flex-col">
+          <label className="font-semibold mb-1">Filtrar por estado</label>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="input w-60"
+          >
+            <option value="">Todas las tareas</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="en progreso">En progreso</option>
+            <option value="completada">Completadas</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col">
+          <label className="font-semibold mb-1">
+            Buscar por título o descripción
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Buscar..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="input pr-20 w-60"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                title="Borrar búsqueda"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col">
+          <label className="font-semibold mb-1">De:</label>
+          <div className="relative">
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => {
+                const newFromDate = e.target.value;
+                setFromDate(newFromDate);
+                if (toDate && newFromDate > toDate) {
+                  setToDate("");
+                }
+              }}
+              className="input pr-10 w-36"
+            />
+            {fromDate && (
+              <button
+                onClick={() => setFromDate("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                title="Borrar fecha de inicio"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col">
+          <label className="font-semibold mb-1">A:</label>
+          <div className="relative">
+            <input
+              type="date"
+              value={toDate}
+              min={fromDate || undefined}
+              onChange={(e) => setToDate(e.target.value)}
+              className="input pr-10 w-36"
+            />
+            {toDate && (
+              <button
+                onClick={() => setToDate("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                title="Borrar fecha de fin"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
       </section>
 
       <section>
-        {tasks.length === 0 && <p className="text-center text-gray-500">No hay tareas para mostrar.</p>}
-        {tasks.map(task => (
+        {tasks.length === 0 && (
+          <p className="text-center text-gray-500">
+            No hay tareas para mostrar.
+          </p>
+        )}
+        {tasks.map((task) => (
           <TaskCard
-          key={task.id}
-          task={task}
-          onEdit={() => setEditingTask(task)} // ← Este ya debería funcionar
-          onDelete={() => handleDelete(task)}
-          onStatusChange={handleStatusChange}
+            key={task.id}
+            task={task}
+            onEdit={() => setEditingTask(task)} // ← Este ya debería funcionar
+            onDelete={() => handleDelete(task)}
+            onStatusChange={handleStatusChange}
           />
         ))}
       </section>

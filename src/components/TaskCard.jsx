@@ -59,7 +59,7 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange }) {
               month: "long",
               day: "numeric",
             })
-          : "N/A"}
+          : "Sin fecha límite"}
       </p>
 
       <div className="mt-3">

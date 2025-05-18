@@ -21,7 +21,11 @@ export default function TaskForm({ onSubmit, initialData, onCancel }) {
   const handleSubmit = e => {
     e.preventDefault();
     if (!title.trim()) return alert('El título es obligatorio');
-    onSubmit({ title, description, dueDate });
+    onSubmit({ 
+      title: title.trim(), 
+      description: description.trim() || null, 
+      dueDate: dueDate || null 
+    });
     setTitle('');
     setDescription('');
     setDueDate('');
